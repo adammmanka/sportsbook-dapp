@@ -33,7 +33,37 @@
 - [wagmi](https://wagmi.sh/core/getting-started) (React Hooks for Ethereum)
 - [ChakraUI](https://chakra-ui.com/getting-started) (component library for React)
 
+### Functionalities to add:
+
+- Allow selecting between team (user) and location provider to show different commands
+
+- Show a list of challenges made
+
+  - **address and name** of who was challenged
+  - a number display with **challenge cost**
+  - a number display with **bet amount** (if any)
+  - a button to **update** challenge that opens to enter a new wallet address
+  - a button to **cancel** challenge and refund
+
+- Show a list of current unaccepted challenges for current user
+
+  - **address and name** of who made the challenge
+  - a number display with **challenge cost**
+  - a number display with **bet amount** (if any)
+  - a button to **accept**
+  - a button to **cancel**
+
+- Show a list of unstarted challenges by current location provider
+
+  - a button to **start**
+  - a button to **complete**
+  - a button to **decline**
+
+- A profile to display NFTs, accepted challenges, and contact information. Also preferred locations and preferred areas to facilitate matchmaking.
+
 ## SmartContracts
+
+**Lacks an additional deploy script to update automatically the front end with the latest deployed address and ABI**
 
 Written on Solidity and tested and deployed with Hardhat.
 
@@ -85,6 +115,11 @@ Later:
 - Add payment for location provider
 
 ### Function to update an existing challenge.
+
+**function updateLocationProvider**
+
+- Give both teams the ability to update the location provider.
+- If a location update is submitted, it must be accepted by the other team
 
 **function updateChallengedTeam**
 
