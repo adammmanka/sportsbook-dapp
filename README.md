@@ -1,16 +1,56 @@
 # SportsBook
 
-Social media dapp that allows for coordination and betting on a date and place to have a match between two teams. Additionally, both teams get an NFT of the match after the result of the match is inputed and validated by both teams, which also releases the amount betted (if any) to the winner team.
+**UNDER CONSTRUCTION**
 
-When both teams have already payed the minimum amount to the place where the match is expected to take place, the owner of such place gets the right to accept the match and with that accepting, get the money for the reservation. That emits an event that says that challenge was accepted and is going to take place at the place and time suggested by both teams. Until the place accepts the match, any team can call "withdraw" for their funds (and the oposite team, if any) to return to their wallet.
+## Sports dApp that allows:
 
-## Contracts
+### Team1 challenge to a -sport- match with Team2
+
+- Challenging another team, choosing a location provider, and automatically agreeing on payment for half of the location's provider fee half each team.
+- Allows for betting if payed more than the minimum amount for the location. It is automatically paid to the winning team (or split in half if tied) when the match is marked as completed.
+
+### Networking with other players and teams
+
+- Include a social app that allow to view people and teams near your location that play the sport you want.
+- Allow for team and player accounts to display their stats and NFT on their profiles.
+
+### Include a NFT collectibles feature
+
+- It will mint a NFT with the result of the match for both teams and the location provider when the challenge is completed.
+
+### Easy to use by web2 & web3 natives
+
+- Allows login with mail, Google, Twitter, Facebook and Wallet.
+- Automatically generates a wallet key pair for each user that doesn't register with a wallet, with a section to view the private key like [Gala Games](https://app.gala.games/) or [PunkWallet](https://punkwallet.io/).
+- Would be nice to involve a [feeless payment gateway](https://github.com/lacrypta/gateway) to put the payment of the transactions by the location provider ideally. It could be useful to use a platform token ($SPOR) instead of using the native token of the blockhain it's deployed.
+
+## Frontend
+
+**Developed using**
+
+- [NextJs](https://nextjs.org/) (React framework)
+- [Rainbowkit](https://www.rainbowkit.com/docs/introduction) (wallet connector)
+- [wagmi](https://wagmi.sh/core/getting-started) (React Hooks for Ethereum)
+- [ChakraUI](https://chakra-ui.com/getting-started) (component library for React)
+
+## SmartContracts
+
+Written on Solidity and tested and deployed with Hardhat.
+
+1. To run tests, enter `/hardhat` folder with command `cd hardhat`
+2. Then, run `yarn` to install dependencies
+3. Finally, run `yarn hardhat test` to run the tests
 
 ### Data structure for a match.
 
 **struct MatchChallenge**
 
-- Team(s) involved in a match.
+- **Team(s)** involved in a match.
+- **Location provider**
+- If match already been **accepted** by both teams
+- If match already **started** according to location provider
+- If match already **finished** according to location provider
+  (after setting **finished** to true, trigger payments for location provider and winner),
 
 Later:
 

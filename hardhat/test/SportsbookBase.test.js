@@ -9,6 +9,7 @@ const { assert, expect } = require("chai");
       const baseValue = ethers.utils.parseEther("1.0");
       // Test scope variables to take out of the beforeEach
       let sportsbookBase, deployer, team1, team2, locationProvider;
+      let locationProviderSportsbook, team1Sportsbook, team2Sportsbook;
       const chainId = network.config.chainId;
 
       beforeEach(async function () {
@@ -19,6 +20,12 @@ const { assert, expect } = require("chai");
         locationProvider = accounts[3];
         await deployments.fixture("base");
         sportsbookBase = await ethers.getContract("SportsbookBase", deployer);
+        team1Sportsbook = await ethers.getContract("SportsbookBase", team1);
+        team2Sportsbook = await ethers.getContract("SportsbookBase", team2);
+        locationProviderSportsbook = await ethers.getContract(
+          "SportsbookBase",
+          locationProvider
+        );
       });
       describe("createChallenge", function () {
         it("creates a challenge with the correct data", async function () {
@@ -80,11 +87,8 @@ const { assert, expect } = require("chai");
         });
       });
       describe("updateChallengedTeam", function () {
-        let team1Sportsbook, team2Sportsbook;
         beforeEach(async function () {
-          team1Sportsbook = await ethers.getContract("SportsbookBase", team1);
-          team2Sportsbook = await ethers.getContract("SportsbookBase", team2);
-          const createChallenge = await team1Sportsbook.createChallenge(
+          await team1Sportsbook.createChallenge(
             team2.address,
             locationProvider.address,
             { value: baseValue }
@@ -113,11 +117,8 @@ const { assert, expect } = require("chai");
         });
       });
       describe("deleteChallenge", function () {
-        let team1Sportsbook, team2Sportsbook;
         beforeEach(async function () {
-          team1Sportsbook = await ethers.getContract("SportsbookBase", team1);
-          team2Sportsbook = await ethers.getContract("SportsbookBase", team2);
-          const createChallenge = await team1Sportsbook.createChallenge(
+          await team1Sportsbook.createChallenge(
             team2.address,
             locationProvider.address,
             { value: baseValue }
@@ -136,6 +137,15 @@ const { assert, expect } = require("chai");
         it("doesn't allow to delete a challenge by anyone outside the teams", async function () {
           await expect(sportsbookBase.deleteChallenge(0)).to.be.reverted; // deployer account
         });
+        it("doesn't allow to delete a challenge that has already started", async function () {
+          const locationProviderSportsbook = await ethers.getContract(
+            "SportsbookBase",
+            locationProvider
+          );
+          const deleteChallenge =
+            await locationProviderSportsbook.startChallenge(0);
+          await expect(team1Sportsbook.deleteChallenge(0)).to.be.reverted;
+        });
         it("doesn't allow to delete a challenge that has already finished", async function () {
           const deleteChallenge = await team1Sportsbook.deleteChallenge(0);
           await expect(team1Sportsbook.deleteChallenge(0)).to.be.reverted;
@@ -144,7 +154,7 @@ const { assert, expect } = require("chai");
           const startingTeam1Balance =
             await team1Sportsbook.provider.getBalance(team1.address);
 
-          const transactionResponse = await team2Sportsbook.deleteChallenge(0);
+          const transactionResponse = await team1Sportsbook.deleteChallenge(0);
           const transactionReceipt = await transactionResponse.wait(1);
           const { gasUsed, effectiveGasPrice } = transactionReceipt;
           const gasCost = gasUsed.mul(effectiveGasPrice);
@@ -153,16 +163,114 @@ const { assert, expect } = require("chai");
             team1.address
           );
 
-          100 + 1 - 0.1;
-          101 - 0.1;
           assert.equal(
-            startingTeam1Balance.add(baseValue).sub(gasUsed).toString(),
-            endingTeam1Balance.sub(gasUsed).toString()
+            startingTeam1Balance.add(baseValue).sub(gasCost).toString(),
+            endingTeam1Balance.toString()
           );
         });
-        xit("returns funds to team2 after deleting challenge", async function () {
-          const deleteChallenge = await team1Sportsbook.deleteChallenge(0);
-          await expect(team1Sportsbook.deleteChallenge(0)).to.be.reverted;
+        it("returns funds to team2 after deleting challenge", async function () {
+          const acceptChallenge = await team2Sportsbook.acceptChallenge(0, {
+            value: baseValue,
+          });
+          const startingTeam2Balance =
+            await team2Sportsbook.provider.getBalance(team2.address);
+          const transactionResponse = await team1Sportsbook.deleteChallenge(0);
+          const endingTeam2Balance = await team2Sportsbook.provider.getBalance(
+            team2.address
+          );
+          assert.equal(
+            startingTeam2Balance.add(baseValue).toString(),
+            endingTeam2Balance.toString()
+          );
+        });
+      });
+      describe("startChallenge", function () {
+        beforeEach(async function () {
+          team1Sportsbook = await ethers.getContract("SportsbookBase", team1);
+          team2Sportsbook = await ethers.getContract("SportsbookBase", team2);
+          await team1Sportsbook.createChallenge(
+            team2.address,
+            locationProvider.address,
+            { value: baseValue }
+          );
+        });
+        it("doesn't allow the challenge to start if team2 hasn't accepted", async function () {
+          await expect(team1Sportsbook.startChallenge(0)).to.be.reverted;
+        });
+        it("only allows location provider to start a challenge", async function () {
+          await team2Sportsbook.acceptChallenge(0, { value: baseValue });
+          await expect(team1Sportsbook.startChallenge(0)).to.be.reverted;
+        });
+        it("marks a challenge as started after starting it", async function () {
+          await team2Sportsbook.acceptChallenge(0, { value: baseValue });
+          await locationProviderSportsbook.startChallenge(0);
+          const isStarted = await team2Sportsbook.isMatchStarted(0);
+          expect(isStarted).to.be.true;
+        });
+      });
+      describe("completeChallenge", function () {
+        beforeEach(async function () {
+          team1Sportsbook = await ethers.getContract("SportsbookBase", team1);
+          team2Sportsbook = await ethers.getContract("SportsbookBase", team2);
+          await team1Sportsbook.createChallenge(
+            team2.address,
+            locationProvider.address,
+            { value: baseValue }
+          );
+        });
+        it("allows to complete challenges that already started", async function () {
+          await team2Sportsbook.acceptChallenge(0, { value: baseValue });
+          await locationProviderSportsbook.startChallenge(0);
+          await locationProviderSportsbook.completeChallenge(0, 1, 1);
+          const isFinished = await team2Sportsbook.isMatchFinished(0);
+          expect(isFinished).to.be.true;
+        });
+        it("reverts to complete challenges that haven't started", async function () {
+          await expect(locationProviderSportsbook.completeChallenge(0, 1, 1)).to
+            .be.reverted;
+        });
+        it("reverts to complete challenges that already finshed", async function () {
+          await team2Sportsbook.acceptChallenge(0, { value: baseValue });
+          await locationProviderSportsbook.startChallenge(0);
+          await locationProviderSportsbook.completeChallenge(0, 1, 1);
+          await expect(locationProviderSportsbook.completeChallenge(0, 1, 1)).to
+            .be.reverted;
+        });
+        it("reverts to complete challenge by someone else than locationProvider", async function () {
+          await team2Sportsbook.acceptChallenge(0, { value: baseValue });
+          await locationProviderSportsbook.startChallenge(0);
+          await expect(team1Sportsbook.completeChallenge(0, 1, 1)).to.be
+            .reverted;
+        });
+        it("emits an event after completing the challenge", async function () {
+          await team2Sportsbook.acceptChallenge(0, { value: baseValue });
+          await locationProviderSportsbook.startChallenge(0);
+          await expect(
+            locationProviderSportsbook.completeChallenge(0, 1, 1)
+          ).to.emit(locationProviderSportsbook, "ChallengeResult");
+        });
+        it("splits the prize if both teams draw", async function () {
+          await team2Sportsbook.acceptChallenge(0, { value: baseValue });
+          const startingTeam1Balance =
+            await team1Sportsbook.provider.getBalance(team1.address);
+          const startingTeam2Balance =
+            await team2Sportsbook.provider.getBalance(team2.address);
+          await locationProviderSportsbook.startChallenge(0);
+          await locationProviderSportsbook.completeChallenge(0, 1, 1);
+          const endingTeam1Balance = await team1Sportsbook.provider.getBalance(
+            team1.address
+          );
+          const endingTeam2Balance = await team2Sportsbook.provider.getBalance(
+            team2.address
+          );
+          assert.equal(
+            startingTeam1Balance.toString(),
+            startingTeam2Balance.toString()
+          );
+          assert.equal(
+            endingTeam1Balance.toString(),
+            endingTeam2Balance.toString()
+          );
         });
       });
     });
