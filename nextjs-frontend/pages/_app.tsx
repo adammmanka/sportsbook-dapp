@@ -11,7 +11,8 @@ import "./theme/styles.css";
 
 const { chains, provider, webSocketProvider } = configureChains(
   [
-    chain.goerli,
+    chain.hardhat,
+    // chain.goerli,
     // chain.mainnet,
     // chain.polygon,
     // chain.optimism,

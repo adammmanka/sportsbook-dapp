@@ -13,16 +13,57 @@ import {
   useColorModeValue,
   useBreakpointValue,
 } from "@chakra-ui/react";
+import CreateChallenge from "../buttons/CreateChallenge";
+import AcceptChallenge from "../buttons/AcceptChallenge";
+import DeclineChallenge from "../buttons/DeclineChallenge";
+import UpdateChallenge from "../buttons/UpdateChallenge";
+import { useState } from "react";
+import { useAccount } from "wagmi";
 
 const Team = () => {
   const bgColor = useColorModeValue("green.400", "gray.700");
   const colSpan = useBreakpointValue({ base: 2, md: 1 });
 
+  const { address } = useAccount();
+
+  const [locationProvider, setLocationProvider] = useState("");
+  const onChangeLocationProvider = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setLocationProvider(event.target.value);
+  };
+
+  const [challengedTeam, setChallengedTeam] = useState("");
+  const onChangeChallengedTeam = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setChallengedTeam(event.target.value);
+  };
+
+  const [challengeId, setChallengeId] = useState("");
+  const onChangeChallengeId = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setChallengeId(event.target.value);
+  };
+
+  const [updateChallengeId, setUpdateChallengeId] = useState("");
+  const onChangeUpdateChallengeId = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setUpdateChallengeId(event.target.value);
+  };
+
+  const [updateChallengedTeam, setUpdateChallengedTeam] = useState("");
+  const onChangeUpdateChallengedTeam = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setUpdateChallengedTeam(event.target.value);
+  };
+
   return (
     <VStack
       w="full"
       h="full"
-      padding={10}
+      padding={5}
       spacing={5}
       alignItems="flex-start"
       bg={bgColor}
@@ -31,81 +72,96 @@ const Team = () => {
         <Heading as="h2" size="xl">
           Team (user) options
         </Heading>
-        <Text size="md">
-          Remember to use yourself as a provider while it's in beta to not lose
-          your funds
-        </Text>
       </VStack>
-      <SimpleGrid columns={2} columnGap={3} rowGap={6} w="full">
+
+      <SimpleGrid columns={2} columnGap={3} rowGap={3} w="full">
         <GridItem colSpan={2}>
           <Heading as="h3" size="md">
             Challenge another team to a match
           </Heading>
-          <Text>Ideally this two would include a search engine</Text>
         </GridItem>
+
         <GridItem colSpan={colSpan}>
           <FormControl>
             <FormLabel>Address of team to challenge:</FormLabel>
             <Input
+              value={challengedTeam}
+              onChange={onChangeChallengedTeam}
               type="text"
               placeholder="Enter wallet of team to challenge"
             ></Input>
           </FormControl>
         </GridItem>
+
         <GridItem colSpan={colSpan}>
           <FormControl>
             <FormLabel>Address of location provider:</FormLabel>
             <Input
+              value={locationProvider}
+              onChange={onChangeLocationProvider}
               type="text"
               placeholder="Enter wallet of location provider"
-            ></Input>
+            />
           </FormControl>
         </GridItem>
+
         <GridItem colSpan={2}>
           <Checkbox>Bet on this challenge</Checkbox>
         </GridItem>
+
         <GridItem colSpan={2}>
-          <Text>Your cost: $25 | Total cost: $50</Text>
+          <Text>
+            Your cost: <strong>0.001 ETH</strong> | Total cost:{" "}
+            <strong>0.002 ETH</strong>
+          </Text>
         </GridItem>
+
         <GridItem colSpan={2}>
-          <Button size="lg" w="full">
-            Send challenge
-          </Button>
+          <CreateChallenge
+            challengedTeam={challengedTeam}
+            locationProvider={locationProvider}
+          />
         </GridItem>
+
         <GridItem colSpan={2}>
           <Divider />
         </GridItem>
+
+        {/* Accept/Decline section */}
 
         <GridItem colSpan={2}>
           <Heading as="h3" size="md" py={2}>
             Accept/Decline existing challenge
           </Heading>
-          <Text>
-            Ideally this would be a selector that reads current existing
-            challenges to connected wallet
-          </Text>
         </GridItem>
 
         <GridItem colSpan={2}>
           <FormControl>
             <FormLabel>Challenge ID:</FormLabel>
-            <Input type="text" placeholder="Enter challenge ID"></Input>
+            <Input
+              value={challengeId}
+              onChange={onChangeChallengeId}
+              type="number"
+              placeholder="Enter challenge ID"
+            ></Input>
           </FormControl>
         </GridItem>
+
         <GridItem colSpan={2}>
-          <Text>Cost of accepting: $25</Text>
+          <Text>
+            Cost of accepting: <strong>0.001 ETH</strong>
+          </Text>
         </GridItem>
 
         <GridItem colSpan={1}>
-          <Button size="lg" w="full" colorScheme="yellow">
-            Accept
-          </Button>
+          <AcceptChallenge challengeId={challengeId} />
         </GridItem>
+
         <GridItem colSpan={1}>
-          <Button size="lg" w="full" colorScheme="red">
-            Decline
-          </Button>
+          <DeclineChallenge challengeId={challengeId} />
         </GridItem>
+
+        {/* Update challenge section */}
 
         <GridItem colSpan={2}>
           <Divider />
@@ -115,27 +171,38 @@ const Team = () => {
           <Heading as="h3" size="md" py={2}>
             Update challenge
           </Heading>
-          <Text>
-            Ideally this display challenges created by current user to make
-            selection easier. Also it shows location price and betted amount
-          </Text>
         </GridItem>
+
         <GridItem colSpan={colSpan}>
           <FormControl>
             <FormLabel>Challenge ID:</FormLabel>
-            <Input type="text" placeholder="Enter challenge ID"></Input>
+            <Input
+              value={updateChallengeId}
+              onChange={onChangeUpdateChallengeId}
+              type="text"
+              placeholder="Enter challenge ID"
+            ></Input>
           </FormControl>
         </GridItem>
+
         <GridItem colSpan={colSpan}>
           <FormControl>
             <FormLabel>Address of new challenged team:</FormLabel>
             <Input
-              type="text"
+              value={updateChallengedTeam}
+              onChange={onChangeUpdateChallengedTeam}
+              type="number"
               placeholder="Enter wallet of challenged team"
             ></Input>
           </FormControl>
         </GridItem>
+
         <GridItem colSpan={2}>
+          <UpdateChallenge challengeId="4" newChallengedTeam={address} />
+          <UpdateChallenge
+            challengeId={updateChallengeId}
+            newChallengedTeam={updateChallengedTeam}
+          />
           <Button size="lg" w="full">
             Update challenge
           </Button>

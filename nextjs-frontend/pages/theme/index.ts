@@ -4,6 +4,27 @@ import {
   withDefaultColorScheme,
   withDefaultVariant,
 } from "@chakra-ui/react";
+import { NodeNextRequest } from "next/dist/server/base-http/node";
+
+const inputSelectStyles = {
+  variants: {
+    filled: {
+      field: {
+        _focus: {
+          borderColor: "brand.800",
+          backgroundColor: "#FFF",
+        },
+      },
+    },
+  },
+  sizes: {
+    md: {
+      field: {
+        borderRadius: "none",
+      },
+    },
+  },
+};
 
 const theme = extendTheme(
   {
@@ -24,6 +45,9 @@ const theme = extendTheme(
     fonts: {
       heading: `Montserrat, ${base.fonts?.heading}`,
       body: `Inter, ${base.fonts?.body}`,
+    },
+    components: {
+      Input: { ...inputSelectStyles },
     },
   },
   // Setting style rules to apply to all instances of a certain component

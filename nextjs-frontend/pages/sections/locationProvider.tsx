@@ -22,8 +22,8 @@ const LocationProvider = () => {
     <VStack
       w="full"
       h="full"
-      padding={10}
-      spacing={10}
+      padding={5}
+      spacing={5}
       alignItems="flex-start"
       bg={bgColor}
     >
@@ -32,17 +32,17 @@ const LocationProvider = () => {
         <Heading as="h2" size="xl">
           Location provider
         </Heading>
-        <Text size="md">
+        {/* <Text size="md">
           Remember to use yourself as a provider while it's in beta to not lose
           your funds
-        </Text>
+        </Text> */}
 
-        <SimpleGrid columns={2} columnGap={3} rowGap={6} w="full">
+        <SimpleGrid columns={2} columnGap={3} rowGap={3} w="full">
           <GridItem colSpan={2}>
             <Heading as="h3" size="md">
               Set a challenge as started
             </Heading>
-            <Text>Is this function really necessary?</Text>
+            {/* <Text>Is this function really necessary?</Text> */}
           </GridItem>
           <GridItem colSpan={2}>
             <FormControl>
@@ -64,9 +64,9 @@ const LocationProvider = () => {
             <Heading as="h3" size="md">
               Set a challenge as completed
             </Heading>
-            <Text>
+            {/* <Text>
               It would be nice to display team's names to avoid confusions
-            </Text>
+            </Text> */}
           </GridItem>
           <GridItem colSpan={2}>
             <FormControl>

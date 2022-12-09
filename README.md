@@ -1,79 +1,143 @@
-# SportsBook
+# SportsBook UNDER CONSTRUCTION
 
-**UNDER CONSTRUCTION**
+## Sports dApp
 
-## Sports dApp that allows:
+**For everyone:**
 
-### Team1 challenge to a -sport- match with Team2
+- Allow communication between users, teams and location providers
+- Showcase past matches on your profile as NFTs
+- Showcase stats and other information on profiles
 
-- Challenging another team, choosing a location provider, and automatically agreeing on payment for half of the location's provider fee half each team.
-- Allows for betting if payed more than the minimum amount for the location. It is automatically paid to the winning team (or split in half if tied) when the match is marked as completed.
+**For users:**
 
-### Networking with other players and teams
+- Social media app to find a team for the sport you select
+- Find a team on your geographic zone
 
-- Include a social app that allow to view people and teams near your location that play the sport you want.
-- Allow for team and player accounts to display their stats and NFT on their profiles.
+**For teams:**
 
-### Include a NFT collectibles feature
+- Find and challenge other teams on the same geographic zone
+- Pay to location providers for matches against other teams (half each team)
+- Bet between teams on the outcome of a given match
 
-- It will mint a NFT with the result of the match for both teams and the location provider when the challenge is completed.
+**For location providers:**
 
-### Easy to use by web2 & web3 natives
+- Get instant payment after match is over (and setting it's score)
 
-- Allows login with mail, Google, Twitter, Facebook and Wallet.
-- Automatically generates a wallet key pair for each user that doesn't register with a wallet, with a section to view the private key like [Gala Games](https://app.gala.games/) or [PunkWallet](https://punkwallet.io/).
-- Would be nice to involve a [feeless payment gateway](https://github.com/lacrypta/gateway) to put the payment of the transactions by the location provider ideally. It could be useful to use a platform token ($SPOR) instead of using the native token of the blockhain it's deployed.
+## Changelog
 
-## Frontend
+- 08/12/2022: Integrated Wagmi hooks to make buttons interactive
+- 07/12/2022: Made a simple layout for buttons with ChakraUI
+- 06/12/2022: Installed NextJS with TypeScript, RainbowKit, Wagmi and ChakraUI for frontend
+- 05/12/2022: Tested smart contract with Hardhat and did some corrections. Expanded README.md
+- 04/12/2022: Created README.md and first smart contract (SportsbookBase). Tested on scaffold-eth for a quick frontend
 
-**Developed using**
+## Pending
 
-- [NextJs](https://nextjs.org/) (React framework)
-- [Rainbowkit](https://www.rainbowkit.com/docs/introduction) (wallet connector)
-- [wagmi](https://wagmi.sh/core/getting-started) (React Hooks for Ethereum)
-- [ChakraUI](https://chakra-ui.com/getting-started) (component library for React)
+### Now
 
-### Functionalities to add:
+**Frontend**
 
-- Allow selecting between team (user) and location provider to show different commands
+- Fix Update Challenge button hook
+- Add a button to set connected wallet as team2 and location provider to make testing easier
+- Add a button to cancel match by team1
 
-- Show a list of challenges made
+**Smart contracts**
 
-  - **address and name** of who was challenged
-  - a number display with **challenge cost**
-  - a number display with **bet amount** (if any)
-  - a button to **update** challenge that opens to enter a new wallet address
-  - a button to **cancel** challenge and refund
+- Review if "started" from MatchChallenge struct is really necessary
+- Allow for createChallenge to not include a challenged address, thus making the challenge acceptable by anyone
+- If team2 is not specified in a challenge, make whoever calls acceptChallenge the team2 address
+- Specify an amount to be paid to the location provider
+- Make deleteChallenge() callable by location provider
 
-- Show a list of current unaccepted challenges for current user
+### Later
 
-  - **address and name** of who made the challenge
-  - a number display with **challenge cost**
-  - a number display with **bet amount** (if any)
-  - a button to **accept**
-  - a button to **cancel**
+**Frontend**
 
-- Show a list of unstarted challenges by current location provider
+- Show current challenge cost when accepting
+- Show bet amount (if any) and calculate a total
+- Show a list of all existing challenges
+- Show location provider and betted amount when accepting/declining
+- Add an option to bet and enter the amount
+- Add a button to select different layouts (for location provider and team options)
+- Add a functionality to detect current chain Id and select correct contract address accordingly
 
-  - a button to **start**
-  - a button to **complete**
-  - a button to **decline**
+**Smart contract**
 
-- A profile to display NFTs, accepted challenges, and contact information. Also preferred locations and preferred areas to facilitate matchmaking.
+- Include Date and time of the match ([to be included later](https://soliditytips.com/articles/solidity-dates-time-operations/)) wherever necessary
+- Mint a basic NFT when completing the challenge by location provider
+- Give both teams the ability to update the challenge with a bet
+- Add updateLocationProvider() function
+- Give both teams the ability to change location
 
-## SmartContracts
+### Future
 
-**Lacks an additional deploy script to update automatically the front end with the latest deployed address and ABI**
+**Frontend**
 
-Written on Solidity and tested and deployed with Hardhat.
+- Translate address to a name (user/team/location provider)
+- Add another layout for user options
+- Show user stats and other information
+- Show existing challenges for connected wallet
+- Include a search engine for teams when challenging and updating
+- Integrate mail, Google, Twitter and Facebook login options
+- Start integrating a social media feature
+
+**Smart contract**
+
+- Add a small fee when processing payments
+- Make the NFT include dynamically the result of the challenge and location provider & teams logos.
+- Explore the option of a [feeless payment gateway](https://github.com/lacrypta/gateway)
+- Explore the option of location providers to be a contract that contains data on how much it wants to be paid, and days and time available for matches
+- Explore the option of a platform token ($SPOR)
+- Automatically generate a wallet key pair for each user that doesn't register with a wallet, with a section to view the private key like [Gala Games](https://app.gala.games/) or [PunkWallet](https://punkwallet.io/).
+
+# Smart Contracts
 
 1. To run tests, enter `/hardhat` folder with command `cd hardhat`
 2. Then, run `yarn` to install dependencies
 3. Finally, run `yarn hardhat test` to run the tests
 
-### Data structure for a match.
+## Functions
 
-**struct MatchChallenge**
+### createChallenge(address \_team2, address \_locationProvider)
+
+_Create a new match challenge_
+
+- Push a MatchChallenge structured item to matchChallenges array.
+- Specify an amount to be betted on the outcome of the match
+- Specify the location provider
+
+### acceptChallenge(uint256 \_challengeId)
+
+_Accept an existing challenge_
+
+- Push the MatchAccepted structured item to the acceptedChallenges array.
+- Add payment for betting on outcome of the match
+
+### deleteChallenge(uint256 \_challengeId)
+
+_Function that deletes existing challenge_
+
+- Set challenge on matchChallenges as finished
+- Return ETH paid
+
+### updateChallengedTeam(uint256 \_challengeId, address \_newTeam2)
+
+_Update an existing challenge's team 2_
+
+- Give team1 (proposer) the ability to challenge a different team on the same proposal.
+
+### updateLocationProvider(uint256 \_challengeId, address \_newLocationProvider)
+
+_Update an existing challenge's location provider_
+
+- Give both teams the ability to update the location provider.
+- If a location update is submitted, it must be accepted by the other team
+
+### functions to view existing challenges... (to be listed)
+
+### struct MatchChallenge
+
+_Data structure for a match_
 
 - **Team(s)** involved in a match.
 - **Location provider**
@@ -82,70 +146,27 @@ Written on Solidity and tested and deployed with Hardhat.
 - If match already **finished** according to location provider
   (after setting **finished** to true, trigger payments for location provider and winner),
 
-Later:
+## Frontend
 
-- Creator of match can be a proposer (challenge anyone who pays up) or a challenger (challenge a specific team))
-- Date and time of the match ([to be included later](https://soliditytips.com/articles/solidity-dates-time-operations/))
-- Wallet address of the location provider, (which in a later version could be linked to another contract that allows to open and close the time openings for a match, that would be selected by proposing teams and this dates get locked after a match is accepted).
-- Outcome of the match
+### Functionalities to add:
 
-### Function that creates a new match challenge
+**Displaying existing challenges for connected wallet:**
 
-**function createChallenge**
+- **address and name** of who made the challenge
+- **challenge cost**
+- **bet amount** (if any)
+- **accept** button
+- **cancel** button
 
-- Push a MatchChallenge structured item to matchChallenges array.
-- Specify an amount to be betted on the outcome of the match
-- Specify the location provider
+**Displaying unstarted challenges by location provider**
 
-Later:
+- a button to **start**
+- a button to **complete**
+- a button to **decline**
 
-- If team2 is not specified, make the challenge to be a proposed challenge.
-- Specify an amount to be paid to the location provider
+**Profiles**
 
-### Function to accept a specific challenge
-
-**function acceptChallenge**
-
-- Push the MatchAccepted structured item to the acceptedChallenges array.
-- Add payment for betting on outcome of the match
-
-Later:
-
-- If team2 is not specified, make the accepter be the team2
-- Add payment for location provider
-
-### Function to update an existing challenge.
-
-**function updateLocationProvider**
-
-- Give both teams the ability to update the location provider.
-- If a location update is submitted, it must be accepted by the other team
-
-**function updateChallengedTeam**
-
-- Give team1 (proposer) the ability to challenge a different team on the same proposal.
-
-###
-
-Later:
-
-- Give both teams the ability to change location
-- Give both teams the ability to pay for location
-- Give both teams the ability to bet on the outcome of the match
-
-### Function that deletes existing challenge.
-
-**function deleteChallenge**
-
-- Set challenge on matchChallenges as finished
-- Return ETH paid
-
-Later:
-
-- Callable by location provider and both teams.
-
-### Function to view existing challenges.
-
-## To be added later
-
-### Function for location provider to accept a match (when both teams invested enough and place owner agrees).
+- A display for NFTs
+- Challenges made, received, and played
+- Contact information
+- Preferred locations & geographic area for matchmaking.

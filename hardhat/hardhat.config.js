@@ -4,10 +4,10 @@ require("@nomicfoundation/hardhat-chai-matchers");
 require("dotenv").config();
 require("hardhat-deploy");
 
-// const PRIVATE_KEY = process.env.PRIVATE_KEY;
+const PRIVATE_KEY = process.env.PRIVATE_KEY;
 
-// const GOERLI_RPC_URL = process.env.GOERLI_RPC_URL || "";
-// const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY || "";
+const GOERLI_RPC_URL = process.env.GOERLI_RPC_URL || "";
+const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY || "";
 
 // If you're experiencing issues with Goerli...
 //  you can configure Polygon's testnet Mumbai to play. DYOR

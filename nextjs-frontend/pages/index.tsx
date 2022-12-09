@@ -2,13 +2,9 @@ import { ConnectButton } from "@rainbow-me/rainbowkit";
 import { useAccount } from "wagmi";
 import {
   Container,
-  Box,
   Heading,
-  Text,
-  Input,
   Button,
   Flex,
-  VStack,
   HStack,
   useColorMode,
   useColorModeValue,
@@ -18,6 +14,9 @@ import { useIsMounted } from "./hooks/useIsMounted";
 import Team from "./sections/team";
 import LocationProvider from "./sections/locationProvider";
 import Head from "next/head";
+import { useContractRead } from "wagmi";
+import abi from "./constants/abi.json";
+import contractAddresses from "./constants/contractAddresses.json";
 
 const Home: NextPage = () => {
   const { toggleColorMode } = useColorMode();
@@ -25,6 +24,12 @@ const Home: NextPage = () => {
 
   const mounted = useIsMounted();
   const { address } = useAccount();
+
+  const { data, isError, isLoading } = useContractRead({
+    address: "0xecb504d39723b0be0e3a9aa33d646642d1051ee1",
+    abi: abi,
+    functionName: "getHunger",
+  });
 
   return (
     <>
@@ -40,8 +45,8 @@ const Home: NextPage = () => {
           w="full"
           px={10}
         >
-          <Heading marginTop={5} as="h1" size="3xl">
-            Sportsbook ⚽
+          <Heading marginY={5} as="h1" size="xl">
+            ⚽ 🥊 Sportsbook 🏒 🏉
           </Heading>
 
           <Button
