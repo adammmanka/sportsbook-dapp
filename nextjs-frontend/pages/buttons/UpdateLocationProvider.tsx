@@ -8,32 +8,30 @@ import { ethers, BigNumber } from "ethers";
 import {
   Button,
   GridItem,
-  Heading,
   FormControl,
   FormLabel,
   Input,
-  Checkbox,
-  Text,
+  Heading,
   useBreakpointValue,
 } from "@chakra-ui/react";
 import { useState } from "react";
 import sportsbookBase from "../constants/SportsbookBase.json";
 
-const CreateChallenge = () => {
+const UpdateLocationProvider = () => {
   const colSpan = useBreakpointValue({ base: 2, md: 1 });
 
-  const [locationProvider, setLocationProvider] = useState("");
-  const onChangeLocationProvider = (
+  const [updateChallengeId, setUpdateChallengeId] = useState("");
+  const onChangeUpdateChallengeId = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setUpdateChallengeId(event.target.value);
+  };
+
+  const [updateLocationProvider, setLocationProvider] = useState("");
+  const onChangeUpdateLocationProvider = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     setLocationProvider(event.target.value);
-  };
-
-  const [challengedTeam, setChallengedTeam] = useState("");
-  const onChangeChallengedTeam = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setChallengedTeam(event.target.value);
   };
 
   const { address } = useAccount();
@@ -42,14 +40,15 @@ const CreateChallenge = () => {
   const { config } = usePrepareContractWrite({
     address: contractAddress,
     abi: sportsbookBase.abi,
-    functionName: "createChallenge",
+    functionName: "updateLocationProvider",
     args: [
-      challengedTeam,
-      locationProvider,
+      updateChallengeId,
+      updateLocationProvider,
+
       // BigNumber.from(uint256 variable),
-      {
-        value: ethers.utils.parseEther((0.001).toString()),
-      },
+      // {
+      //   value: ethers.utils.parseEther((0.02 * mintAmount).toString()),
+      // },
     ],
   });
 
@@ -62,59 +61,48 @@ const CreateChallenge = () => {
   return (
     <>
       <GridItem colSpan={2}>
-        <Heading as="h3" size="md">
-          Challenge another team
+        <Heading as="h3" size="md" py={2}>
+          Update location provider
         </Heading>
       </GridItem>
 
-      <GridItem colSpan={2}>
+      <GridItem colSpan={colSpan}>
         <FormControl>
-          <FormLabel>Team to challenge:</FormLabel>
+          <FormLabel>Challenge ID:</FormLabel>
           <Input
-            value={challengedTeam}
-            onChange={onChangeChallengedTeam}
+            value={updateChallengeId}
+            onChange={onChangeUpdateChallengeId}
             type="text"
-            placeholder="Address of team to challenge"
+            placeholder="Enter challenge ID"
           ></Input>
         </FormControl>
       </GridItem>
 
       <GridItem colSpan={colSpan}>
         <FormControl>
-          <FormLabel>Location provider:</FormLabel>
+          <FormLabel>New location provider:</FormLabel>
           <Input
-            value={locationProvider}
-            onChange={onChangeLocationProvider}
+            value={updateLocationProvider}
+            onChange={onChangeUpdateLocationProvider}
             type="text"
-            placeholder="Enter wallet of location provider"
-          />
+            placeholder="Address of location provider"
+          ></Input>
         </FormControl>
       </GridItem>
 
       <GridItem colSpan={2}>
-        <Checkbox>Bet on this challenge</Checkbox>
-      </GridItem>
-
-      <GridItem colSpan={2}>
-        <Text>Total cost: 0.002 ETH</Text>
-        <Text>
-          Your cost: <strong>0.001 ETH</strong>
-        </Text>
-      </GridItem>
-
-      <GridItem colSpan={2} marginTop={3}>
         <Button
           size="lg"
           w="full"
-          colorScheme="purple"
-          disabled={/*!write || */ isLoading}
+          colorScheme="blue"
+          // disabled={!write || isLoading}
           onClick={() => write?.()}
         >
-          {isLoading ? "Challenging..." : "Challenge!"}
+          {isLoading ? "Updating..." : "Update"}
         </Button>
       </GridItem>
     </>
   );
 };
 
-export default CreateChallenge;
+export default UpdateLocationProvider;

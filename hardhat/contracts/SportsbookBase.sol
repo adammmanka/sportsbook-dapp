@@ -67,6 +67,27 @@ contract SportsbookBase {
         matchChallenges[_challengeId].team2 = _newTeam2;
     }
 
+    function updateLocationProvider(
+        uint256 _challengeId,
+        address _newLocationProvider
+    ) public {
+        require(
+            msg.sender == matchChallenges[_challengeId].team1 ||
+                msg.sender == matchChallenges[_challengeId].team2,
+            "You're not any of the teams!"
+        );
+        require(
+            matchChallenges[_challengeId].started != true,
+            "Challenge has already been started!"
+        );
+
+        matchChallenges[_challengeId].locationProvider = _newLocationProvider;
+    }
+
+    // function acceptUpdateLocationProvider(uint256 _challengeId) public {
+    //     require(msg.sender == matchChallenges[_challengeId].acceptingTeam);
+    // }
+
     function deleteChallenge(uint256 _challengeId) public {
         // Check
         require(
@@ -79,8 +100,9 @@ contract SportsbookBase {
         );
         require(
             msg.sender == matchChallenges[_challengeId].team1 ||
-                msg.sender == matchChallenges[_challengeId].team2,
-            "You're not any of the teams!"
+                msg.sender == matchChallenges[_challengeId].team2 ||
+                msg.sender == matchChallenges[_challengeId].locationProvider,
+            "You're not any of the teams nor the location provider!"
         );
 
         // Effect

@@ -14,8 +14,6 @@ import { useIsMounted } from "./hooks/useIsMounted";
 import Team from "./sections/team";
 import LocationProvider from "./sections/locationProvider";
 import Head from "next/head";
-import { useContractRead } from "wagmi";
-import abi from "./constants/abi.json";
 import contractAddresses from "./constants/contractAddresses.json";
 
 const Home: NextPage = () => {
@@ -25,18 +23,12 @@ const Home: NextPage = () => {
   const mounted = useIsMounted();
   const { address } = useAccount();
 
-  const { data, isError, isLoading } = useContractRead({
-    address: "0xecb504d39723b0be0e3a9aa33d646642d1051ee1",
-    abi: abi,
-    functionName: "getHunger",
-  });
-
   return (
     <>
       <Head>
         <title>Sportsbook</title>
         <meta name="description" content="Made with love by Lulox" />
-        <link rel="icon" href="/favicon.ico" />
+        {/* <link rel="icon" href="/favicon.ico" /> */}
       </Head>
       <Container maxW="container.xl" p={0} bg={bgColor} centerContent>
         <HStack

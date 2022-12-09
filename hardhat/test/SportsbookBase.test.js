@@ -138,12 +138,10 @@ const { assert, expect } = require("chai");
           await expect(sportsbookBase.deleteChallenge(0)).to.be.reverted; // deployer account
         });
         it("doesn't allow to delete a challenge that has already started", async function () {
-          const locationProviderSportsbook = await ethers.getContract(
-            "SportsbookBase",
-            locationProvider
-          );
-          const deleteChallenge =
-            await locationProviderSportsbook.startChallenge(0);
+          await team2Sportsbook.acceptChallenge(0, {
+            value: baseValue,
+          });
+          await locationProviderSportsbook.startChallenge(0);
           await expect(team1Sportsbook.deleteChallenge(0)).to.be.reverted;
         });
         it("doesn't allow to delete a challenge that has already finished", async function () {
@@ -264,11 +262,46 @@ const { assert, expect } = require("chai");
             team2.address
           );
           assert.equal(
-            startingTeam1Balance.toString(),
-            startingTeam2Balance.toString()
+            startingTeam1Balance.add(baseValue).toString(),
+            endingTeam1Balance.toString()
           );
           assert.equal(
-            endingTeam1Balance.toString(),
+            startingTeam2Balance.add(baseValue).toString(),
+            endingTeam2Balance.toString()
+          );
+        });
+        it("sends the whole betted amount to team1 if it wins", async function () {
+          await team2Sportsbook.acceptChallenge(0, { value: baseValue });
+          const startingTeam1Balance =
+            await team1Sportsbook.provider.getBalance(team1.address);
+          await locationProviderSportsbook.startChallenge(0);
+          await locationProviderSportsbook.completeChallenge(0, 2, 1);
+          const endingTeam1Balance = await team1Sportsbook.provider.getBalance(
+            team1.address
+          );
+          const prize = baseValue.mul(2);
+          assert.equal(
+            startingTeam1Balance.add(prize).toString(),
+            endingTeam1Balance.toString()
+          );
+        });
+        xit("sends the whole betted amount to team2 if it wins", async function () {
+          await team2Sportsbook.acceptChallenge(0, { value: baseValue });
+          const startingTeam2Balance =
+            await team2Sportsbook.provider.getBalance(team2.address);
+          await locationProviderSportsbook.startChallenge(0);
+          const tx = await locationProviderSportsbook.completeChallenge(
+            0,
+            2,
+            1
+          );
+          await tx.wait(1);
+          const endingTeam2Balance = await team2Sportsbook.provider.getBalance(
+            team2.address
+          );
+          const prize = baseValue.mul(2);
+          assert.equal(
+            startingTeam2Balance.add(prize).toString(),
             endingTeam2Balance.toString()
           );
         });

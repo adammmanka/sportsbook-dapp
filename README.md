@@ -25,7 +25,8 @@
 
 ## Changelog
 
-- 08/12/2022: Integrated Wagmi hooks to make buttons interactive
+- 09/12/2022: Added some Wagmi read indicators,improvements to interface and smart contract
+- 08/12/2022: Integrated Wagmi hooks to make buttons interact with the blockchain
 - 07/12/2022: Made a simple layout for buttons with ChakraUI
 - 06/12/2022: Installed NextJS with TypeScript, RainbowKit, Wagmi and ChakraUI for frontend
 - 05/12/2022: Tested smart contract with Hardhat and did some corrections. Expanded README.md
@@ -37,37 +38,32 @@
 
 **Frontend**
 
-- Fix Update Challenge button hook
-- Add a button to set connected wallet as team2 and location provider to make testing easier
-- Add a button to cancel match by team1
+- Add a switch to change between team and location provider interface
+- Add a list of all existing challenges
+- Read current challenge cost from blockchain when accepting
 
 **Smart contracts**
 
-- Review if "started" from MatchChallenge struct is really necessary
 - Allow for createChallenge to not include a challenged address, thus making the challenge acceptable by anyone
 - If team2 is not specified in a challenge, make whoever calls acceptChallenge the team2 address
 - Specify an amount to be paid to the location provider
-- Make deleteChallenge() callable by location provider
+- Add updateLocationProvider() function
 
 ### Later
 
 **Frontend**
 
-- Show current challenge cost when accepting
-- Show bet amount (if any) and calculate a total
-- Show a list of all existing challenges
-- Show location provider and betted amount when accepting/declining
-- Add an option to bet and enter the amount
+- Add an option to bet when accepting?
+- Show location provider address and bet amount (if any) and calculate a total when accepting/declining
 - Add a button to select different layouts (for location provider and team options)
 - Add a functionality to detect current chain Id and select correct contract address accordingly
 
 **Smart contract**
 
+- Give both teams the ability to update the challenge with a bet?
 - Include Date and time of the match ([to be included later](https://soliditytips.com/articles/solidity-dates-time-operations/)) wherever necessary
 - Mint a basic NFT when completing the challenge by location provider
-- Give both teams the ability to update the challenge with a bet
-- Add updateLocationProvider() function
-- Give both teams the ability to change location
+- Give both teams the ability to change location (other team has to accept the change for new location provider to be able to start and complete the challenge))
 
 ### Future
 

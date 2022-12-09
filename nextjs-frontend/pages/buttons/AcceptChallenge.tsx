@@ -34,7 +34,7 @@ const AcceptChallenge = ({ challengeId }: { challengeId: any }) => {
     <Button
       size="lg"
       w="full"
-      colorScheme="yellow"
+      colorScheme="green"
       // disabled={!write || isLoading}
       onClick={() => write?.()}
     >
