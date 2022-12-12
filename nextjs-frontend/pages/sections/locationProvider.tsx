@@ -30,7 +30,7 @@ const LocationProvider = () => {
     >
       <VStack spacing={3} alignItems="flex-start">
         <Heading as="h2" size="xl">
-          Location provider
+          Location provider/Oracle
         </Heading>
 
         <SimpleGrid columns={2} columnGap={3} rowGap={3} w="full">

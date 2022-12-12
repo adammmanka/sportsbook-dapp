@@ -25,6 +25,7 @@
 
 ## Changelog
 
+- 11/12/2022: Added some concept images made with Canva
 - 09/12/2022: Added some Wagmi read indicators,improvements to interface and smart contract
 - 08/12/2022: Integrated Wagmi hooks to make buttons interact with the blockchain
 - 07/12/2022: Made a simple layout for buttons with ChakraUI
