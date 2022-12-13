@@ -23,6 +23,8 @@
 
 - Get instant payment after match is over (and setting it's score)
 
+(for big sports betting there's already [other options](https://stake.com/) )
+
 ## Changelog
 
 - 11/12/2022: Added some concept images made with Canva
